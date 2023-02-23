@@ -101,7 +101,7 @@ void Create_List(List** head, int n)
 //	*head = tmp;
 //}
 
-int main()
+int Dmain()
 {
 	setlocale(LC_ALL, "Russian");
 
@@ -116,4 +116,6 @@ int main()
 	cin >> x;
 	Insert_value(&head, x);
 	cout << head;
+
+	return 0;
 }
