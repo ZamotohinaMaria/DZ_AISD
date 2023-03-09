@@ -86,11 +86,11 @@ Bin*  CreateBalanceTree(Bin** root, int n)
 
 }
 
-int main()
+int main_16_02()
 {
 	Bin* root = new Bin(0, NULL, NULL);
 	int n = 20;
-	CreateBalanceTree(&root, n);
+	root = CreateBalanceTree(&root, n);
 	cout << "-----------" << endl;
 	/*LeftInsert(root, 3);
 	RightInsert(root, 5);
