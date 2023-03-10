@@ -75,28 +75,60 @@ Tree* Poisk(Tree* root, int val)
 	return NULL;
 }
 
+Tree* Poisk_Prev(Tree* root, int val)
+{
+	while (root)
+	{
+		if (root->left != NULL && (root->left)->data == val) return root;
+		if (root->right != NULL && (root->right)->data == val) return root;
+		if (root->data < val) root = root->right;
+		else if (root->data > val) root = root->left;
+	}
+	return NULL;
+}
+
 bool DeleteEl(Tree** root, int val)
 {
 	Tree* root_tmp = *root;
+	Tree* tmp = Poisk(root_tmp, val);
+	Tree* prev_tmp = Poisk_Prev(root_tmp, val);
+	cout << "Prev data:" << prev_tmp->data;
+	Tree* tmp_del = NULL;
+
 	while (root_tmp)
 	{
-		Tree* tmp = Poisk(root_tmp, val);
-		Tree* tmp_del = NULL;
 		if (tmp == NULL) return false;
 
 		if (tmp->left == NULL && tmp->right == NULL)
 		{
-			delete root_tmp;
-			root_tmp = NULL;
+			if ((prev_tmp->left)->data == val)
+			{
+				prev_tmp->left = NULL;
+				delete tmp;
+			}
+			if ((prev_tmp->right)->data == val)
+			{
+				prev_tmp->right = NULL;
+				delete tmp;
+			}
+			tmp = NULL;
+			return true;
+		}
+		if (tmp->left != NULL && tmp->right == NULL)
+		{
+			if (prev_tmp->data > val) prev_tmp->left = tmp->left;
+			if (prev_tmp->data < val) prev_tmp->right = tmp->left;
+			delete tmp;
+			tmp = NULL;
 			return true;
 		}
 
-		if (tmp->left != NULL && tmp->right == NULL)
+		if (tmp->right != NULL && tmp->left == NULL)
 		{
-			Tree* tmp1 = root_tmp->left;
-			root_tmp = tmp_del;
-			delete tmp_del;
-			root_tmp = tmp1;
+			if (prev_tmp->data > val) prev_tmp->left = tmp->right;
+			if (prev_tmp->data < val) prev_tmp->right = tmp->right;
+			delete tmp;
+			tmp = NULL;
 			return true;
 		}
 	}
@@ -120,12 +152,12 @@ int main()
 			cin >> x;
 		}
 	}
+	cout << endl;
 	PrintTree(root, 3);
-	cout << endl << root->data;
 	cout << "Input element to delete it" << endl;
 	cin >> x;
 	DeleteEl(&root, x);
-	cout << root->data;
+	cout << endl;
 	PrintTree(root, 3);
 
 	return 0;
