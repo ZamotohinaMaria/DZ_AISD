@@ -87,50 +87,86 @@ Tree* Poisk_Prev(Tree* root, int val)
 	return NULL;
 }
 
-bool DeleteEl(Tree** root, int val)
+bool DeleteEl(Tree* root, int val)
 {
-	Tree* root_tmp = *root;
-	Tree* tmp = Poisk(root_tmp, val);
-	Tree* prev_tmp = Poisk_Prev(root_tmp, val);
-	cout << "Prev data:" << prev_tmp->data;
-	Tree* tmp_del = NULL;
+	Tree* tmp = Poisk(root, val);
 
-	while (root_tmp)
+	if (tmp == NULL) return false;
+
+	if (tmp->left != NULL && tmp->right != NULL)
 	{
-		if (tmp == NULL) return false;
+		Tree* tmp_max = tmp->left;
+		int max_val = tmp_max->data;
+		while (tmp_max)
+		{
+			if (tmp_max->data > max_val) max_val = tmp_max->data;
+			if (tmp_max->right == NULL) tmp_max = tmp_max->left;
+			else tmp_max = tmp_max->right;
+		}
+		tmp_max = Poisk(tmp, max_val);
+		DeleteEl(tmp, max_val);
+		tmp->data = max_val;
+		return true;
+	}
 
+	if (tmp == root)
+	{
 		if (tmp->left == NULL && tmp->right == NULL)
 		{
-			if ((prev_tmp->left)->data == val)
-			{
-				prev_tmp->left = NULL;
-				delete tmp;
-			}
-			if ((prev_tmp->right)->data == val)
-			{
-				prev_tmp->right = NULL;
-				delete tmp;
-			}
+			delete tmp;
 			tmp = NULL;
-			return true;
 		}
+		//------------------------------------------------------------
 		if (tmp->left != NULL && tmp->right == NULL)
 		{
-			if (prev_tmp->data > val) prev_tmp->left = tmp->left;
-			if (prev_tmp->data < val) prev_tmp->right = tmp->left;
-			delete tmp;
-			tmp = NULL;
-			return true;
+			Tree* tmp_del = tmp;
+			tmp = tmp->left;
+			delete tmp_del;
+			tmp_del = NULL;
 		}
-
-		if (tmp->right != NULL && tmp->left == NULL)
+		if (tmp->left == NULL && tmp->right != NULL)
 		{
-			if (prev_tmp->data > val) prev_tmp->left = tmp->right;
-			if (prev_tmp->data < val) prev_tmp->right = tmp->right;
-			delete tmp;
-			tmp = NULL;
-			return true;
+			Tree* tmp_del = tmp;
+			tmp = tmp->right;
+			delete tmp_del;
+			tmp_del = NULL;
 		}
+	}
+
+	Tree* prev_tmp = Poisk_Prev(root, val);
+	cout << "Prev data:" << prev_tmp->data;
+
+	if (tmp->left == NULL && tmp->right == NULL)
+	{
+		if ((prev_tmp->left)->data == val)
+		{
+			prev_tmp->left = NULL;
+			delete tmp;
+		}
+		if ((prev_tmp->right)->data == val)
+		{
+			prev_tmp->right = NULL;
+			delete tmp;
+		}
+		tmp = NULL;
+		return true;
+	}
+	//------------------------------------------------------------
+	if (tmp->left != NULL && tmp->right == NULL)
+	{
+		if (prev_tmp->data > val) prev_tmp->left = tmp->left;
+		if (prev_tmp->data < val) prev_tmp->right = tmp->left;
+		delete tmp;
+		tmp = NULL;
+		return true;
+	}
+	if (tmp->right != NULL && tmp->left == NULL)
+	{
+		if (prev_tmp->data > val) prev_tmp->left = tmp->right;
+		if (prev_tmp->data < val) prev_tmp->right = tmp->right;
+		delete tmp;
+		tmp = NULL;
+		return true;
 	}
 }
 
@@ -156,7 +192,7 @@ int main()
 	PrintTree(root, 3);
 	cout << "Input element to delete it" << endl;
 	cin >> x;
-	DeleteEl(&root, x);
+	DeleteEl(root, x);
 	cout << endl;
 	PrintTree(root, 3);
 
